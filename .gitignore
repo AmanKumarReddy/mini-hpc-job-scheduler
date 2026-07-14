@@ -1,0 +1,17 @@
+# Executable, which always runs in background
+scheduler
+
+# intermediate object files (a file blw compilable(.c) and executable(binary file))
+*.o
+
+# Log files
+logs/*.log
+
+# Backup files similar to swap(swp) files
+*~
+
+# settings and properties of my VS Code
+.vscode/
+
+# files which produces while editing them
+*.swp
