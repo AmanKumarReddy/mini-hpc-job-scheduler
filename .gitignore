@@ -1,9 +1,3 @@
-start
-stop
-submit
-status
-cancel
-output
 
 # --- Intermediate Object Files ---
 # Files produced during the compilation phase
