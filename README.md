@@ -1,160 +1,82 @@
-# Mini HPC Job Scheduler
+HPC Job Scheduler
+A lightweight, efficient C-based job scheduler designed to manage and execute tasks in a Unix-like environment.
 
-A Linux-based job scheduler written in C that demonstrates the core concepts behind HPC (High Performance Computing) batch schedulers. The project focuses on queue management, Linux process execution, job monitoring, and persistent logging. It is designed as a systems programming project inspired by real-world HPC schedulers such as Slurm and PBS.
+🎓 About the Developer
+I am a B.Tech student aspiring to become an AI Infrastructure Engineer. This project was developed for educational purposes to deepen my understanding of process management, daemonization, and system-level communication.
 
----
-
-## Features
-
-* Queue-based job scheduling using a linked list
-* Interactive command-line interface
-* Submit and execute Linux commands
-* Process creation using `fork()`
-* Program execution using `exec()`
-* Process synchronization using `wait()`
-* Process ID (PID) tracking
-* Exit status monitoring
-* High-precision execution time measurement
-* Persistent job logging
-* Multi-file modular C project
-* Build automation using Makefile
-
----
+Note on Usage & Licensing: You are welcome to use, study, and modify this project for your own learning. However, please note that all copyright is owned by me. Please do not publish or distribute this code anywhere without providing proper credits.
 
 ## Project Structure
 
-```
+The project is modularized to separate concerns between core scheduler logic, communication protocols, and individual command handlers:
+
+```text
 mini-hpc-job-scheduler/
-│
+├── .vscode/             # Editor configuration
 ├── src/
-│   ├── main.c
-│   ├── scheduler.c
-│   └── scheduler.h
-│
-├── logs/
-│   └── jobs.log
-│
-├── docs/
-│
-├── README.md
+│   ├── cancel/          # Logic for job cancellation
+│   ├── common/          # Shared IPC, Job, and Queue structures
+│   ├── output/          # Handler for retrieving job output
+│   ├── scheduler/       # Core daemon engine (main.c, scheduler.c)
+│   ├── status/          # Logic for checking job status
+│   ├── stop/            # Logic for graceful shutdown
+│   └── submit/          # Logic for job submission
+├── .gitignore
 ├── Makefile
-└── .gitignore
-```
+└── README.md
 
----
 
-## How It Works
+🏗️ Architecture & Design
+This scheduler acts as a persistent background service:
 
-1. User submits a job.
-2. The scheduler stores the job in a waiting queue.
-3. The scheduler executes the next available job using Linux system calls.
-4. The parent process waits until execution completes.
-5. Execution details such as PID, execution time, and exit status are collected.
-6. Completed jobs are moved to the completed queue.
-7. Job information is written to `logs/jobs.log`.
+Daemonized Process: The core engine runs in the background, managing a queue of tasks.
 
----
+Communication: A FIFO (Named Pipe) facilitates communication between user commands and the scheduler.
 
-## Technologies Used
+Task Execution: The scheduler forks processes to execute commands asynchronously, tracking their PIDs, exit statuses, and execution times.
 
-* C Programming
-* Linux
-* GCC
-* Linked Lists
-* Queue Data Structure
-* Dynamic Memory Allocation
-* Makefile
-* Linux System Calls (`fork`, `exec`, `wait`)
-* Process Management
-* File Handling
-* `gettimeofday()` for high-precision timing
+Logging: All job metadata is stored globally in /tmp/hpc_jobs.log for easy access from any directory.
 
----
+🚀 How to Use
+Initialization
+Before running, compile and install the scheduler:
 
-## Build
-
-```bash
+Bash
 make
-```
+make install or sudo make install
+Administrative Commands
+Manage the background service using these commands:
 
+sudo start: Initializes the scheduler daemon.
+
+sudo stop: Gracefully shuts down the scheduler.
+
+sudo status: Checks if the scheduler is currently running.
+
+User CLI Commands
+Once the scheduler is started, users can interact with it using:
+
+submit "<command>": Submits a job to the queue. Note: If your command includes pipes (|), ampersands (&), or other shell operators, you must wrap the entire command in double quotes. A Job ID will be returned to track your progress.
+
+output <id>: Displays the output of a specific job.
+
+status <id>: Queries the current status of a submitted job.
+
+cancel <id>: Terminates a specific job.
+
+📋 Logging & Storage
+Log Location: All activity is recorded in /tmp/hpc_jobs.log.
+
+Persistence Warning: Files in /tmp/ are considered temporary. They may be cleared by the system automatically after 10 days or immediately upon system reboot.
+
+Monitoring: Use tail -f /tmp/hpc_jobs.log to watch the scheduler logs in real-time.
+
+⚠️ Important Precautions
+Read-Only Monitoring: You may open /tmp/hpc_jobs.log to view it, but do not edit or save changes while the scheduler is running. Modifying this file will disrupt the scheduler's logging process and could lead to data loss or file corruption.
+
+Backup: If you need to keep your job history, manually copy the log file to your home directory (cp /tmp/hpc_jobs.log ~/hpc_history.log).
+
+✨ Why this is useful
+This project provides a robust, "set-it-and-forget-it" way to run background tasks. It abstracts complex process management into a simple CLI, allowing you to trigger heavy commands, walk away, and check on them whenever you are ready.
 ---
 
-## Run
-
-```bash
-./scheduler
-```
-
-or
-
-```bash
-make run
-```
-
----
-
-## Clean
-
-```bash
-make clean
-```
-
----
-
-## Current Version
-
-**Version:** v2.0
-
-### Implemented
-
-* Interactive scheduler
-* Waiting queue
-* Completed queue
-* Real Linux command execution
-* PID tracking
-* Exit status tracking
-* High-precision execution timing
-* Persistent job logging
-
----
-
-## Future Enhancements
-
-* Background scheduler daemon
-* Separate job submission client
-* Job status client
-* Inter-process communication (IPC)
-* Priority scheduling
-* Round Robin scheduling
-* Remote job execution
-* Docker integration
-* Distributed execution support
-* Web-based monitoring dashboard
-
----
-
-## Learning Objectives
-
-This project was built to strengthen understanding of:
-
-* Systems Programming
-* Linux Process Management
-* Scheduler Design
-* Queue-Based Job Scheduling
-* Operating System Concepts
-* HPC Infrastructure Fundamentals
-
----
-
-## License
-
-This project is intended for educational and learning purposes.
-
----
-
-## Author
-
-Aman Kumar Reddy
-B.Tech Student
-
-Aspiring AI Infrastructure Engineer

@@ -1,17 +1,26 @@
-# Executable, which always runs in background
-scheduler
+start
+stop
+submit
+status
+cancel
+output
 
-# intermediate object files (a file blw compilable(.c) and executable(binary file))
+# --- Intermediate Object Files ---
+# Files produced during the compilation phase
 *.o
 
-# Log files
-logs/*.log
+# --- System & Runtime Artifacts ---
+# Temporary files used for inter-process communication or logging
+/tmp/hpc_jobs.log
+/tmp/hpc_output_*.txt
+/tmp/hpc_scheduler_fifo
 
-# Backup files similar to swap(swp) files
+# --- Editor & Backup Files ---
+# Backup files created by text editors
 *~
-
-# settings and properties of my VS Code
-.vscode/
-
-# files which produces while editing them
 *.swp
+*.swo
+
+# --- IDE Settings ---
+# Project-specific configuration for VS Code
+.vscode/
